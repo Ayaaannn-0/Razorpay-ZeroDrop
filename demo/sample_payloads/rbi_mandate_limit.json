@@ -1,0 +1,32 @@
+{
+  "entity": "event",
+  "account_id": "acc_demo_merchant_001",
+  "event": "payment.failed",
+  "contains": ["payment"],
+  "payload": {
+    "payment": {
+      "entity": {
+        "id": "pay_sample_mandate_004",
+        "amount": 1850000,
+        "currency": "INR",
+        "status": "failed",
+        "method": "card",
+        "card_id": "card_test_hdfc_04",
+        "email": "priya.mandate@gmail.com",
+        "contact": "+919833445566",
+        "error_code": "BAD_REQUEST_ERROR",
+        "error_description": "Funds are blocked by an existing mandate.",
+        "error_source": "customer",
+        "error_step": "payment_authorization",
+        "error_reason": "funds_blocked_by_mandate",
+        "card": {
+          "network": "Visa",
+          "issuer": "HDFC",
+          "last4": "4567",
+          "type": "debit"
+        },
+        "created_at": 1735689600
+      }
+    }
+  }
+}

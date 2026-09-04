@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Razorpay ZeroDrop — Intelligent Decline Recovery</title>
+  <link rel="stylesheet" href="/static/css/sandbox.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar (Official Razorpay style) -->
+  <header class="app-header">
+    <div class="brand-wrapper">
+      <div class="rzp-logo-wrap">
+        <!-- Razorpay Official Vector Logo Mark -->
+        <svg width="108" height="26" viewBox="0 0 108 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12.42 0L2.12 14.85H8.38L4.85 26L19.85 9.85H13.25L16.85 0H12.42Z" fill="#0C2340"/>
+          <text x="24" y="19" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="18" letter-spacing="-0.5px" fill="#0C2340">Razorpay</text>
+        </svg>
+      </div>
+      <div class="brand-divider"></div>
+      <div>
+        <div class="brand-title">Payment Failure Whisperer</div>
+        <div class="brand-subtitle">Simulated Checkout • Intelligent Decline Diagnostics</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="test-mode-badge">
+        <span class="test-mode-dot"></span>
+        <span>Test Mode</span>
+      </div>
+      <a href="/dashboard" class="nav-link-btn">
+        <span>Merchant Dashboard</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Workspace Layout -->
+  <main class="main-container">
+    <div class="grid-layout">
+
+      <!-- LEFT COLUMN: Razorpay Standard Checkout Simulation -->
+      <section class="checkout-card">
+        <div class="checkout-header">
+          <div class="merchant-info">
+            <div class="merchant-meta">
+              <div class="merchant-avatar">TG</div>
+              <div>
+                <div class="merchant-name">
+                  <span>Whisperer Tech Gear Store</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#38BDF8"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                </div>
+                <div class="order-code" id="orderNumberDisplay" style="font-size: 11px; color: #94A3B8;">Order #OD-90214 • Razorpay Trusted Business</div>
+              </div>
+            </div>
+            <div class="order-amount-display">
+              <div class="amount-label">Amount to Pay</div>
+              <div class="amount-value" id="amountDisplay">₹4,999.00</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulation Controller Bar -->
+        <div class="operator-panel">
+          <div class="operator-panel-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+            <span>Simulation Parameters: Select Failure Event</span>
+          </div>
+          <select id="scenarioSelector" class="scenario-select" onchange="onScenarioChange()">
+            <optgroup label="Customer & Account Limits">
+              <option value="insufficient_funds" selected>insufficient_funds — Insufficient Account Balance</option>
+              <option value="funds_blocked_by_mandate">funds_blocked_by_mandate — Mandate Hold / RBI Threshold (₹18,500)</option>
+              <option value="transaction_daily_limit_exceeded">transaction_daily_limit_exceeded — Daily Spend Limit Exceeded</option>
+              <option value="transaction_frequency_limit_exceeded">transaction_frequency_limit_exceeded — UPI Daily Frequency Limit</option>
+            </optgroup>
+            <optgroup label="Authentication & Security (2FA)">
+              <option value="authentication_failed">authentication_failed — 3D Secure / OTP Authentication Failed</option>
+              <option value="incorrect_otp">incorrect_otp — Incorrect OTP Entered</option>
+              <option value="otp_expired">otp_expired — OTP Timed Out / Expired</option>
+              <option value="payment_risk_check_failed">payment_risk_check_failed — Bank Risk / Fraud Engine Block</option>
+            </optgroup>
+            <optgroup label="Card Verification & Status">
+              <option value="incorrect_cvv">incorrect_cvv — Incorrect CVV Code</option>
+              <option value="card_expired">card_expired — Card Validity Expired</option>
+              <option value="debit_instrument_blocked">debit_instrument_blocked — Card Blocked / Hotlisted</option>
+              <option value="card_not_enrolled">card_not_enrolled — E-Commerce / Online Usage Disabled</option>
+              <option value="international_transaction_not_allowed">international_transaction_not_allowed — International Usage Disabled</option>
+            </optgroup>
+            <optgroup label="UPI Specific">
+              <option value="invalid_vpa">invalid_vpa — Invalid UPI ID / Handle</option>
+              <option value="upi_app_technical_error">upi_app_technical_error — PSP App Routing Failure</option>
+              <option value="payment_timed_out">payment_timed_out — UPI Collect Approval Timed Out</option>
+            </optgroup>
+            <optgroup label="Bank & Gateway Infrastructure">
+              <option value="bank_technical_error">bank_technical_error — Bank Core Banking System (CBS) Downtime</option>
+              <option value="bank_cutoff_in_progress">bank_cutoff_in_progress — Bank CBS Midnight Batch Cutoff</option>
+              <option value="server_error">server_error — Razorpay Gateway Transient Server Error</option>
+              <option value="amount_less_than_minimum_amount">amount_less_than_minimum_amount — Amount Below Minimum Threshold</option>
+            </optgroup>
+          </select>
+          <div class="scenario-meta" id="scenarioMeta">
+            <span><strong>Razorpay Reason:</strong> <code id="metaReason" style="font-family: monospace; color: var(--rzp-navy);">insufficient_funds</code></span>
+            <span><strong>Origin Source:</strong> <code id="metaSource" style="font-family: monospace; color: var(--rzp-navy);">customer</code></span>
+          </div>
+        </div>
+
+        <!-- Payment Instrument Form -->
+        <div class="checkout-body">
+          <div class="tabs-nav">
+            <button class="tab-btn active" id="tabCardBtn" onclick="switchTab('card')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+              <span>Cards (Credit / Debit)</span>
+            </button>
+            <button class="tab-btn" id="tabUpiBtn" onclick="switchTab('upi')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+              <span>UPI / QR</span>
+            </button>
+          </div>
+
+          <!-- Card Form -->
+          <div id="cardFormContainer">
+            <div class="form-group">
+              <label class="form-label">Card Number</label>
+              <input type="text" id="cardNumber" class="form-input" value="4000 0000 0000 9995" placeholder="16-digit card number">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Expiry (MM/YY)</label>
+                <input type="text" id="cardExpiry" class="form-input" value="11/28" placeholder="MM/YY">
+              </div>
+              <div class="form-group">
+                <label class="form-label">CVV</label>
+                <input type="password" id="cardCvv" class="form-input" value="789" maxlength="4" placeholder="3 or 4 digits">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Cardholder Name & Issuing Bank</label>
+              <input type="text" id="cardholderName" class="form-input" value="Ayaan (HDFC Bank)" placeholder="Name on card">
+            </div>
+          </div>
+
+          <!-- UPI Form -->
+          <div id="upiFormContainer" style="display: none;">
+            <div class="form-group">
+              <label class="form-label">Virtual Payment Address (VPA / UPI ID)</label>
+              <input type="text" id="upiVpa" class="form-input" value="failure@razorpay" placeholder="username@okhdfcbank">
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+              <button type="button" class="nav-link-btn" style="font-size: 12px; padding: 5px 10px;" onclick="setVpa('failure@razorpay')">Preset: failure@razorpay</button>
+              <button type="button" class="nav-link-btn" style="font-size: 12px; padding: 5px 10px;" onclick="setVpa('ayaan@okhdfcbank')">Preset: ayaan@okhdfcbank</button>
+            </div>
+          </div>
+
+          <!-- Customer Contact info -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Customer Mobile</label>
+              <input type="text" id="customerPhone" class="form-input" value="+91 98765 43210">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Customer Email</label>
+              <input type="email" id="customerEmail" class="form-input" value="ayaan.shopper@gmail.com">
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <button id="payBtn" class="pay-button" onclick="executeSimulatedPayment()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Authorize Payment</span>
+            <span id="btnAmount">₹4,999.00</span>
+          </button>
+
+          <!-- Security Badge Footer -->
+          <div class="security-badge-footer">
+            <span style="display: inline-flex; align-items: center; gap: 4px;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+              PCI-DSS Level 1 Certified
+            </span>
+            <span>•</span>
+            <span style="display: inline-flex; align-items: center; gap: 4px;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              256-bit SSL Encrypted
+            </span>
+            <span>•</span>
+            <span>Secured by Razorpay</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: Diagnostics & Customer Notifications -->
+      <section class="intelligence-card">
+
+        <!-- Dynamic State Card -->
+        <div id="statusContainer" class="state-box">
+          <!-- Idle State -->
+          <div id="idleState" class="idle-state">
+            <div class="idle-icon-wrap">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+            </div>
+            <h3 id="idleTitle" style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--rzp-navy);">Decline Recovery Agent Standing By</h3>
+            <p id="idleSubtitle" style="font-size: 13px; line-height: 1.5; color: var(--rzp-muted);">Select a failure scenario on the left and click <strong>Authorize Payment</strong>. The system will dispatch an authentic Razorpay webhook event and run real-time AI diagnostics.</p>
+          </div>
+
+          <!-- Processing / Stepper State -->
+          <div id="processingState" class="processing-state" style="display: none;">
+            <div class="stepper-header">
+              <div class="stepper-spinner"></div>
+              <div>
+                <h3 id="stepperTitle" class="stepper-title">Simulating Payment Authorization...</h3>
+                <p id="stepperSub" class="stepper-sub">Razorpay payment gateway & bank network simulation</p>
+              </div>
+            </div>
+
+            <!-- Multi-stage Gateway & AI Pipeline -->
+            <div class="pipeline-steps">
+              <div class="pipeline-step active" id="pipeStep1">
+                <div class="step-indicator"><span class="step-dot"></span></div>
+                <div class="step-text">
+                  <span class="step-name">1. Gateway Ingestion</span>
+                  <span class="step-detail">Dispatched HMAC-signed payment.failed payload</span>
+                </div>
+              </div>
+              <div class="pipeline-step" id="pipeStep2">
+                <div class="step-indicator"><span class="step-dot"></span></div>
+                <div class="step-text">
+                  <span class="step-name">2. Rule Engine & DPDP Extraction</span>
+                  <span class="step-detail">Masking PII & evaluating RBI compliance guidelines</span>
+                </div>
+              </div>
+              <div class="pipeline-step" id="pipeStep3">
+                <div class="step-indicator"><span class="step-dot"></span></div>
+                <div class="step-text">
+                  <span class="step-name">3. Whisperer AI Reasoning</span>
+                  <span class="step-detail">Synthesizing plain-English explanation & SMS dispatch</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Animated Skeleton Shimmer Preview -->
+            <div class="skeleton-shimmer-wrap">
+              <div class="skeleton-row" style="width: 32%; height: 14px;"></div>
+              <div class="skeleton-row" style="width: 92%; height: 18px; margin-top: 10px;"></div>
+              <div class="skeleton-row" style="width: 76%; height: 14px; margin-top: 6px;"></div>
+              <div class="skeleton-actions-preview">
+                <div class="skeleton-action-pill"></div>
+                <div class="skeleton-action-pill"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Result State -->
+          <div id="resultState" style="display: none;">
+            <!-- Gateway Decline Box -->
+            <div class="gateway-decline-card">
+              <div class="gateway-decline-header">
+                <div class="decline-title-group">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  <span>Gateway Transaction Declined</span>
+                </div>
+                <span class="gateway-error-code" id="resultErrorCode">BAD_REQUEST_ERROR</span>
+              </div>
+              <div class="gateway-description" id="resultErrorDescription">
+                The customer does not have sufficient funds in the account to complete the payment.
+              </div>
+            </div>
+
+            <!-- AI Whisperer Interception Card -->
+            <div class="ai-intercept-card">
+              <div class="ai-badge-row">
+                <span class="ai-badge">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  Intelligent Failure Diagnostics
+                </span>
+                <span class="retry-badge" id="resultRetryWindow">Window: Instant</span>
+              </div>
+
+              <div class="ai-explanation-text" id="resultExplanation">
+                Your account has insufficient funds to complete this payment. Please top up your account or use an alternate payment method.
+              </div>
+
+              <div class="recovery-actions-list" id="resultActionsList">
+                <!-- Populated dynamically -->
+              </div>
+
+              <div class="ai-meta-bar">
+                <span>Model: <strong id="resultSource" style="color: var(--rzp-navy);">Groq (Llama-3.3)</strong></span>
+                <span>Latency: <strong id="resultLatency" style="color: var(--rzp-navy);">260ms</strong></span>
+                <span>Confidence: <strong id="resultConfidence" style="color: var(--rzp-navy);">96%</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phone Mockup (SMS Preview) -->
+        <div class="phone-mockup-wrapper">
+          <div class="phone-mockup-title">
+            <span style="display: inline-flex; align-items: center; gap: 6px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              Customer Transactional SMS Alert
+            </span>
+            <span style="font-size: 11px; font-weight: 600; color: #64748b;">TRAI DLT Verified</span>
+          </div>
+
+          <div class="phone-device">
+            <div class="phone-screen">
+              <div class="phone-notch-bar">
+                <span>9:41</span>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <svg width="13" height="11" viewBox="0 0 13 11" fill="currentColor"><rect x="0" y="8" width="2" height="3" rx="0.5"/><rect x="3.5" y="5.5" width="2" height="5.5" rx="0.5"/><rect x="7" y="3" width="2" height="8" rx="0.5"/><rect x="10.5" y="0" width="2" height="11" rx="0.5"/></svg>
+                  <svg width="18" height="10" viewBox="0 0 18 10" fill="currentColor"><rect x="0.5" y="0.5" width="14" height="9" rx="2" stroke="currentColor"/><rect x="2" y="2" width="11" height="6" rx="1"/><rect x="16" y="3" width="1.5" height="4" rx="0.75"/></svg>
+                </div>
+              </div>
+
+              <div class="phone-sms-header">
+                <div class="sms-contact-name">VK-RZRPAY</div>
+                <div class="sms-contact-sub">Official Bank Transactional Alert</div>
+              </div>
+
+              <div class="phone-messages-body">
+                <!-- 1. Standby Empty State (shown initially and immediately on scenario change) -->
+                <div id="smsEmptyState" class="sms-empty-state">
+                  <div class="sms-empty-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                  </div>
+                  <div class="sms-empty-title">Awaiting Transaction Alert</div>
+                  <div class="sms-empty-text">When payment authorization fails, the plain-English explanation & retry link from <strong>VK-RZRPAY</strong> will arrive here in real time.</div>
+                </div>
+
+                <!-- 2. Incoming Notification Typing Indicator (shown during processing) -->
+                <div id="smsIncomingState" class="sms-incoming-state" style="display: none;">
+                  <div class="incoming-header">
+                    <span class="incoming-pulse-dot"></span>
+                    <span class="incoming-label">VK-RZRPAY incoming alert...</span>
+                  </div>
+                  <div class="typing-bubble">
+                    <span class="typing-dots">
+                      <span class="dot"></span>
+                      <span class="dot"></span>
+                      <span class="dot"></span>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- 3. Delivered SMS Bubble (shown once response is received) -->
+                <div class="sms-bubble" id="smsBubble" style="display: none;">
+                  <div id="smsMessageText">
+                    Alert: Your payment of ₹4,999.00 did not go through. Tap below to see why and retry securely.
+                  </div>
+                  <a id="smsRecoveryLink" href="#" target="_blank" class="sms-link">
+                    Tap to retry: http://127.0.0.1:5000/retry/...
+                  </a>
+                  <div class="sms-time" id="smsTimestamp">Just now</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Quick Floating Action Trigger in the corner (Revealed only after payment simulation) -->
+  <button id="floatingCompareBtn" class="floating-compare-trigger" onclick="openBeforeAfterModal()" title="View Before / After Comparison" style="display: none;">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18"/><path d="m8 9-3 3 3 3"/><path d="m16 9 3 3-3 3"/></svg>
+    <span>Before / After</span>
+  </button>
+
+  <!-- Before & After Comparison Modal Dialog -->
+  <div id="beforeAfterModal" class="modal-backdrop" style="display: none;" onclick="handleModalBackdropClick(event)">
+    <div class="modal-dialog">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="impact-tag">Dynamic Decline Diagnostic</span>
+          <h2 class="modal-title">Legacy Standard Razorpay vs. With Failure Whisperer</h2>
+          <p class="modal-subtitle">Side-by-side comparison for the active simulated decline event.</p>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="closeBeforeAfterModal()" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <!-- Active Scenario Dynamic Context Strip -->
+      <div class="modal-active-scenario-bar">
+        <div class="active-scenario-info">
+          <span class="active-scenario-tag">Active Failure Event</span>
+          <span class="active-scenario-title" id="modalScenarioTitle">insufficient_funds</span>
+          <span class="active-scenario-badge" id="modalScenarioSourceBadge">CUSTOMER • PAYMENT_AUTHORIZATION</span>
+        </div>
+        <div class="active-scenario-meta">
+          <span class="meta-label">Simulated Target:</span>
+          <strong id="modalScenarioOrder">Order #OD-90214 (₹4,999.00)</strong>
+        </div>
+      </div>
+
+      <!-- Row-by-Row 2-Column Comparison Matrix -->
+      <div class="comparison-matrix-grid">
+        <!-- ROW 1: Column Headers -->
+        <div class="matrix-cell cell-header before-header">
+          <div class="comp-badge before-badge">
+            <span class="comp-dot red-dot"></span>
+            <span>Legacy Standard Razorpay</span>
+          </div>
+          <span class="comp-stat-bad" id="legacyStatBadge">~72% Cart Drop-off</span>
+        </div>
+        <div class="matrix-cell cell-header after-header">
+          <div class="comp-badge after-badge">
+            <span class="comp-dot green-dot"></span>
+            <span>With Payment Failure Whisperer</span>
+          </div>
+          <span class="comp-stat-good" id="whispererStatBadge">+38% Recovered Revenue</span>
+        </div>
+
+        <!-- ROW 2: Decline Encounter (Raw Gateway Error vs AI Whisperer Card) -->
+        <div class="matrix-cell cell-preview before-preview">
+          <div class="legacy-error-box">
+            <div class="legacy-error-top">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span class="legacy-title">Payment Failed</span>
+            </div>
+            <div class="legacy-code-row">
+              <span class="legacy-code" id="legacyErrorCode">BAD_REQUEST_ERROR</span>
+              <span class="legacy-step" id="legacyErrorStep">step: payment_authorization</span>
+            </div>
+            <div class="legacy-desc" id="legacyErrorDesc">
+              The customer does not have sufficient funds in the account to complete the payment.
+            </div>
+          </div>
+        </div>
+        <div class="matrix-cell cell-preview after-preview">
+          <div class="whisperer-card-preview">
+            <div class="whisperer-card-top">
+              <span class="ai-spark-tag">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                AI Failure Whisperer
+              </span>
+              <span class="status-pill-green" id="whispererRetryWindowBadge">Window: Instant</span>
+            </div>
+            <div class="whisperer-explanation" id="whispererExpText">
+              "Your card couldn't be charged due to insufficient account balance. No money was deducted from your account."
+            </div>
+            <div class="whisperer-actions" id="whispererActionsBox">
+              <!-- Dynamically populated -->
+            </div>
+            <div class="whisperer-sms-tag">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <span>Instant TRAI SMS via <strong>VK-RZRPAY</strong> with secure 1-click retry token</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW 3: Customer Experience & Psychology -->
+        <div class="matrix-cell cell-experience before-experience">
+          <div class="friction-box">
+            <div class="friction-title">Customer Friction & Anxiety</div>
+            <ul class="friction-list" id="legacyFrictionList">
+              <li>
+                <span class="cross-icon">✕</span>
+                <span id="legacyFriction1">High anxiety: Customer wonders <em>"Did my money get debited?"</em></span>
+              </li>
+              <li>
+                <span class="cross-icon">✕</span>
+                <span id="legacyFriction2">Cryptic error code: No recovery pathway or alternative payment method offered.</span>
+              </li>
+              <li>
+                <span class="cross-icon">✕</span>
+                <span id="legacyFriction3">Cart abandonment: Customer closes tab or switches to a competitor site.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="matrix-cell cell-experience after-experience">
+          <div class="delight-box">
+            <div class="delight-title">Customer Experience & Recovery</div>
+            <ul class="delight-list" id="whispererDelightList">
+              <li>
+                <span class="check-icon">✓</span>
+                <span id="whispererDelight1">Immediate reassurance: Explicitly confirms no money was deducted.</span>
+              </li>
+              <li>
+                <span class="check-icon">✓</span>
+                <span id="whispererDelight2">Frictionless 1-click retry: Seamlessly switch to UPI or alternate instrument.</span>
+              </li>
+              <li>
+                <span class="check-icon">✓</span>
+                <span id="whispererDelight3">Omnichannel Recovery: Complete order via mobile link anytime within 60 mins.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ROW 4: Merchant Business Metrics (Guaranteed Side-by-Side Straight Horizontal Alignment) -->
+        <div class="matrix-cell cell-metrics before-metrics">
+          <div class="business-impact-box impact-negative">
+            <div class="impact-title">Merchant Business Impact (Legacy)</div>
+            <div class="impact-metrics-row">
+              <div class="impact-metric">
+                <span class="metric-val text-red" id="legacyRecoveryVal">0%</span>
+                <span class="metric-lbl">Recovery Rate</span>
+              </div>
+              <div class="impact-metric">
+                <span class="metric-val text-red" id="legacyGmvVal">100%</span>
+                <span class="metric-lbl">Lost Customer GMV</span>
+              </div>
+              <div class="impact-metric">
+                <span class="metric-val text-red" id="legacySupportVal">+18%</span>
+                <span class="metric-lbl">Support Tickets</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="matrix-cell cell-metrics after-metrics">
+          <div class="business-impact-box impact-positive">
+            <div class="impact-title">Merchant Business Impact (Whisperer)</div>
+            <div class="impact-metrics-row">
+              <div class="impact-metric">
+                <span class="metric-val text-green" id="whispererRecoveryVal">+38%</span>
+                <span class="metric-lbl">Recovered GMV</span>
+              </div>
+              <div class="impact-metric">
+                <span class="metric-val text-green" id="whispererLatencyVal">120ms</span>
+                <span class="metric-lbl">AI Latency</span>
+              </div>
+              <div class="impact-metric">
+                <span class="metric-val text-green" id="whispererSupportVal">0</span>
+                <span class="metric-lbl">Support Overhead</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Pitch Summary Bar -->
+      <div class="modal-footer-summary">
+        <div class="summary-stat-item">
+          <span class="summary-num text-green">3.5x</span>
+          <span class="summary-desc">Higher retry completion rate vs. standard error banners</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-stat-item">
+          <span class="summary-num text-green">100%</span>
+          <span class="summary-desc">Compliant with DPDP PII Masking & RBI Mandate Rules</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-stat-item">
+          <span class="summary-num text-green">Zero</span>
+          <span class="summary-desc">Merchant code changes (drop-in Razorpay webhook architecture)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/sandbox.js"></script>
+</body>
+</html>

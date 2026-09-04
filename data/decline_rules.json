@@ -1,0 +1,531 @@
+{
+  "version": "1.0.0",
+  "source_documentation": "https://razorpay.com/docs/errors/payments/list/",
+  "rules": {
+    "insufficient_funds": {
+      "error_reason": "insufficient_funds",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "error_description": "The customer does not have sufficient funds in the account to complete the payment.",
+      "official_next_steps": "The customer must retry with a different card or method.",
+      "category": "Customer / Account Balance",
+      "is_retryable": true,
+      "retry_urgency": "immediate",
+      "suggested_methods": ["upi", "netbanking", "alternate_card"],
+      "rbi_rule_context": null,
+      "bank_guidance": "Please ensure sufficient available balance or overdraft limit before retrying.",
+      "default_plain_english_explanation": "Your account has insufficient funds to complete this payment. Please top up your account or use an alternate payment method.",
+      "default_recovery_actions": [
+        {
+          "action": "switch_to_upi",
+          "label": "Pay via UPI instead",
+          "description": "Switch to Google Pay, PhonePe, or Paytm linked to another bank account."
+        },
+        {
+          "action": "use_alternate_card",
+          "label": "Use a different card",
+          "description": "Try a credit card or a debit card with adequate balance."
+        },
+        {
+          "action": "top_up_and_retry",
+          "label": "Top up account & retry",
+          "description": "Add funds to your bank account and retry within 1 hour."
+        }
+      ]
+    },
+    "authentication_failed": {
+      "error_reason": "authentication_failed",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_source": "customer",
+      "error_step": "payment_authentication",
+      "error_description": "The payment failed as 3D secure, or OTP authentication failed. This could happen if the user cancels the payment on the authentication (OTP submit) screen or enters incorrect authentication details such as OTP.",
+      "official_next_steps": "The customer must enter correct authentication details to complete the payment.",
+      "category": "Authentication / 3D Secure",
+      "is_retryable": true,
+      "retry_urgency": "immediate",
+      "suggested_methods": ["card", "upi"],
+      "rbi_rule_context": "RBI mandates Two-Factor Authentication (2FA) / 3D Secure for all domestic digital card transactions.",
+      "bank_guidance": "Ensure your phone has network coverage to receive the banking OTP without delay.",
+      "default_plain_english_explanation": "3D Secure or OTP authentication was not completed or expired. No money was deducted from your account.",
+      "default_recovery_actions": [
+        {
+          "action": "retry_otp",
+          "label": "Retry with new OTP",
+          "description": "Request a fresh OTP and submit within the bank's time limit."
+        },
+        {
+          "action": "switch_to_upi",
+          "label": "Pay instantly via UPI",
+          "description": "Authorize directly inside your UPI app (GPay/PhonePe) using your UPI PIN."
+        }
+      ]
+    },
+    "card_expired": {
+      "error_reason": "card_expired",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "error_description": "The card has expired.",
+      "official_next_steps": "The customer must retry with a valid card.",
+      "category": "Card Validity",
+      "is_retryable": true,
+      "retry_urgency": "immediate",
+      "suggested_methods": ["alternate_card", "upi", "netbanking"],
+      "rbi_rule_context": null,
+      "bank_guidance": "Please check the expiry date (MM/YY) printed on your card or use your replacement card.",
+      "default_plain_english_explanation": "The payment failed because your card has expired. Please use your renewed card or an alternate method.",
+      "default_recovery_actions": [
+        {
+          "action": "use_renewed_card",
+          "label": "Use your renewed card",
+          "description": "Check your physical card for the latest expiry date (MM/YY) and CVV."
+        },
+        {
+          "action": "switch_to_upi",
+          "label": "Pay via UPI",
+          "description": "Fast and cardless payment using any UPI app."
+        }
+      ]
+    },
+    "incorrect_cvv": {
+      "error_reason": "incorrect_cvv",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "error_description": "The customer has entered an incorrect CVV to complete the payment.",
+      "official_next_steps": "The customer must retry and enter the correct CVV.",
+      "category": "Card Details Verification",
+      "is_retryable": true,
+      "retry_urgency": "immediate",
+      "suggested_methods": ["card", "upi"],
+      "rbi_rule_context": "CVV is never stored by merchants per RBI tokenization regulations and must be re-entered on each attempt.",
+      "bank_guidance": "The 3-digit CVV is printed on the back of Visa/Mastercard/RuPay cards (or 4 digits on front for Amex).",
+      "default_plain_english_explanation": "The 3-digit CVV code entered did not match your bank's records. Please recheck your card and try again.",
+      "default_recovery_actions": [
+        {
+          "action": "recheck_cvv",
+          "label": "Re-enter CVV and retry",
+          "description": "Verify the 3-digit security code on the signature strip at the back of your card."
+        },
+        {
+          "action": "switch_to_upi",
+          "label": "Switch to UPI (No CVV required)",
+          "description": "Pay securely using your UPI PIN instead of card details."
+        }
+      ]
+    },
+    "bank_technical_error": {
+      "error_reason": "bank_technical_error",
+      "error_code": "GATEWAY_ERROR",
+      "error_source": "bank",
+      "error_step": "payment_authorization",
+      "error_description": "The issuing bank was facing technical problems at the moment the payment was attempted. This usually occurs when the Core Banking System encounters a technical error while processing the payment.",
+      "official_next_steps": "The customer must try using another bank account or another method.",
+      "category": "Bank Infrastructure / CBS",
+      "is_retryable": true,
+      "retry_urgency": "delayed",
+      "suggested_methods": ["alternate_bank", "upi_different_bank", "credit_card"],
+      "rbi_rule_context": null,
+      "bank_guidance": "The issuing bank's Core Banking System (CBS) is temporarily unresponsive. Transactions from other banks remain operational.",
+      "default_plain_english_explanation": "Your bank's servers are experiencing temporary downtime. This is an issue on the bank's side, not yours.",
+      "default_recovery_actions": [
+        {
+          "action": "use_different_bank",
+          "label": "Use a card from another bank",
+          "description": "Try an alternate bank account (e.g. ICICI, SBI, Axis) that is currently online."
+        },
+        {
+          "action": "wait_and_retry",
+          "label": "Wait 15-30 minutes and retry",
+          "description": "Bank CBS errors typically self-resolve within 15 to 30 minutes."
+        }
+      ]
+    },
+    "bank_cutoff_in_progress": {
+      "error_reason": "bank_cutoff_in_progress",
+      "error_code": "GATEWAY_ERROR",
+      "error_source": "bank",
+      "error_step": "payment_authorization",
+      "error_description": "Bank CBS cutoff is in progress. This is a periodic event at the bank's end.",
+      "official_next_steps": "The customer must retry.",
+      "category": "Bank Infrastructure / CBS",
+      "is_retryable": true,
+      "retry_urgency": "delayed",
+      "suggested_methods": ["alternate_bank", "credit_card"],
+      "rbi_rule_context": "Scheduled bank batch cutoff typically occurs between 11:30 PM and 1:00 AM IST for daily reconciliation.",
+      "bank_guidance": "CBS end-of-day cutoff window is usually active for 20-45 minutes.",
+      "default_plain_english_explanation": "Your bank is running its scheduled daily system maintenance/cutoff. Processing will resume shortly.",
+      "default_recovery_actions": [
+        {
+          "action": "use_different_bank",
+          "label": "Pay with a different bank card",
+          "description": "Use a card issued by an unaffected bank or an international card."
+        },
+        {
+          "action": "retry_after_cutoff",
+          "label": "Retry in 30 minutes",
+          "description": "Wait until your bank's daily batch reconciliation completes."
+        }
+      ]
+    },
+    "funds_blocked_by_mandate": {
+      "error_reason": "funds_blocked_by_mandate",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "error_description": "Funds are blocked by an existing mandate.",
+      "official_next_steps": "Customer needs to release the mandate or use another account.",
+      "category": "RBI Mandate / E-Mandate",
+      "is_retryable": true,
+      "retry_urgency": "immediate",
+      "suggested_methods": ["alternate_card", "upi", "netbanking"],
+      "rbi_rule_context": "RBI circular on e-mandates: Recurring transactions or blocked mandate authorizations hold balance limits until auto-released.",
+      "bank_guidance": "Check active e-mandate holds on your banking netbanking portal or mobile app.",
+      "default_plain_english_explanation": "A portion of your balance is currently reserved by an existing automated payment mandate or pre-auth hold.",
+      "default_recovery_actions": [
+        {
+          "action": "switch_to_upi",
+          "label": "Pay with UPI from another account",
+          "description": "Use UPI linked to an account with unencumbered liquid balance."
+        },
+        {
+          "action": "use_credit_card",
+          "label": "Pay with a Credit Card",
+          "description": "Credit cards are unaffected by debit account mandate holds."
+        }
+      ]
+    },
+    "transaction_daily_limit_exceeded": {
+      "error_reason": "transaction_daily_limit_exceeded",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "error_description": "The customer has exceeded the daily transaction limit set on the card. Some of the cards allow customers to set a limit or have a default limit set.",
+      "official_next_steps": "The customer must retry using a different instrument or wait 24 hours to complete the payment.",
+      "category": "Transaction Limits",
+      "is_retryable": true,
+      "retry_urgency": "delayed",
+      "suggested_methods": ["netbanking", "alternate_card", "upi"],
+      "rbi_rule_context": "Per RBI guidelines, customers can customize per-transaction and daily limits via their bank's mobile app or netbanking.",
+      "bank_guidance": "You can temporarily increase your online transaction limit in your banking app under 'Manage Card Limits'.",
+      "default_plain_english_explanation": "This payment exceeds your card's daily spending limit. You can adjust your limit in your bank app or try another method.",
+      "default_recovery_actions": [
+        {
+          "action": "increase_card_limit",
+          "label": "Increase limit in bank app",
+          "description": "Open your mobile banking app -> Card Services -> Adjust Daily Domestic E-Commerce Limit."
+        },
+        {
+          "action": "switch_to_netbanking",
+          "label": "Pay via Netbanking",
+          "description": "Netbanking usually has higher daily transfer limits than debit card POS/e-commerce."
+        }
+      ]
+    },
+    "transaction_frequency_limit_exceeded": {
+      "error_reason": "transaction_frequency_limit_exceeded",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "error_description": "NPCI has a transaction limit both on the amount and the frequency per day. Customer has exhausted the frequency limit.",
+      "official_next_steps": "Please retry using another payment method.",
+      "category": "NPCI / UPI Limits",
+      "is_retryable": true,
+      "retry_urgency": "delayed",
+      "suggested_methods": ["card", "netbanking"],
+      "rbi_rule_context": "NPCI sets daily limits on both transaction amount and frequency per bank account.",
+      "bank_guidance": "UPI daily frequency limit has been reached for this bank account today.",
+      "default_plain_english_explanation": "You have reached your bank's daily UPI transaction frequency limit. Please use a card or Netbanking to complete this payment.",
+      "default_recovery_actions": [
+        {
+          "action": "switch_to_card",
+          "label": "Pay with Debit / Credit Card",
+          "description": "Card transactions are not subject to UPI frequency limits."
+        },
+        {
+          "action": "switch_to_netbanking",
+          "label": "Pay via Netbanking",
+          "description": "Direct bank transfer with no UPI frequency restriction."
+        }
+      ]
+    },
+    "international_transaction_not_allowed": {
+      "error_reason": "international_transaction_not_allowed",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "error_description": "International transactions are not allowed.",
+      "official_next_steps": "Customer needs to use a domestic payment method or enable international transactions.",
+      "category": "Channel Enablement",
+      "is_retryable": true,
+      "retry_urgency": "immediate",
+      "suggested_methods": ["domestic_upi", "domestic_card"],
+      "rbi_rule_context": "RBI mandates that international card transactions must be explicitly enabled (opt-in) by the cardholder.",
+      "bank_guidance": "Enable 'International Usage' in your mobile banking app under Card Controls.",
+      "default_plain_english_explanation": "International or cross-border payments are currently disabled on your card per RBI regulations.",
+      "default_recovery_actions": [
+        {
+          "action": "enable_international",
+          "label": "Enable international usage in bank app",
+          "description": "Toggle on 'International E-Commerce' under your bank app's card management settings."
+        },
+        {
+          "action": "switch_to_domestic_card",
+          "label": "Use an Indian Rupee (INR) card",
+          "description": "Pay with a domestic card or local UPI app."
+        }
+      ]
+    },
+    "payment_risk_check_failed": {
+      "error_reason": "payment_risk_check_failed",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_source": "bank",
+      "error_step": "payment_authorization",
+      "error_description": "Payment declined due to risk checks. Risk checks are performed by Razorpay, Gateway, and Issuer Bank. The source parameter would give additional clarity where the risk check failed.",
+      "official_next_steps": "The customer must retry with a different card or method.",
+      "category": "Risk & Fraud Prevention",
+      "is_retryable": true,
+      "retry_urgency": "delayed",
+      "suggested_methods": ["upi", "netbanking"],
+      "rbi_rule_context": "Risk engines automatically flag velocity anomalies or suspicious geolocations to protect cardholders.",
+      "bank_guidance": "Call your bank's phone banking helpline to approve the security alert on your card.",
+      "default_plain_english_explanation": "Your bank's fraud prevention system flagged this transaction for security. Contact your bank or try UPI.",
+      "default_recovery_actions": [
+        {
+          "action": "call_bank",
+          "label": "Call bank fraud desk",
+          "description": "Confirm this was an authorized purchase so they unblock your card."
+        },
+        {
+          "action": "switch_to_upi",
+          "label": "Pay via UPI",
+          "description": "UPI utilizes your biometric or device-bound token and usually bypasses card risk filters."
+        }
+      ]
+    },
+    "incorrect_otp": {
+      "error_reason": "incorrect_otp",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_source": "customer",
+      "error_step": "payment_authentication",
+      "error_description": "The customer has entered an incorrect OTP to complete the payment.",
+      "official_next_steps": "The customer must retry and enter the correct OTP.",
+      "category": "Authentication / 3D Secure",
+      "is_retryable": true,
+      "retry_urgency": "immediate",
+      "suggested_methods": ["card", "upi"],
+      "rbi_rule_context": "RBI rules permit up to 3 OTP attempts before temporarily locking the authentication session.",
+      "bank_guidance": "Wait for the latest SMS from your bank to ensure you are entering the newest OTP.",
+      "default_plain_english_explanation": "The OTP entered was incorrect. Please check your SMS and enter the latest one-time password.",
+      "default_recovery_actions": [
+        {
+          "action": "retry_correct_otp",
+          "label": "Request new OTP and retry",
+          "description": "Wait 30 seconds for any older SMS to clear, click Resend OTP, and enter carefully."
+        },
+        {
+          "action": "switch_to_upi",
+          "label": "Pay with UPI PIN instead",
+          "description": "Avoid SMS OTP delivery delays by entering your UPI PIN on your phone."
+        }
+      ]
+    },
+    "otp_expired": {
+      "error_reason": "otp_expired",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_source": "customer",
+      "error_step": "payment_authentication",
+      "error_description": "The OTP has expired.",
+      "official_next_steps": "Customer must request a new OTP and retry.",
+      "category": "Authentication / 3D Secure",
+      "is_retryable": true,
+      "retry_urgency": "immediate",
+      "suggested_methods": ["card", "upi"],
+      "rbi_rule_context": "Bank OTPs in India are valid for only 3 to 5 minutes for transaction safety.",
+      "bank_guidance": "OTPs expire quickly. Ensure prompt entry once received.",
+      "default_plain_english_explanation": "The OTP timed out before it was submitted. Your card was not charged.",
+      "default_recovery_actions": [
+        {
+          "action": "request_fresh_otp",
+          "label": "Generate a fresh OTP",
+          "description": "Restart the payment step to get a brand new SMS code."
+        }
+      ]
+    },
+    "debit_instrument_blocked": {
+      "error_reason": "debit_instrument_blocked",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_source": "bank",
+      "error_step": "payment_authorization",
+      "error_description": "The customer is using a blocked card to complete the payment. The card could have been blocked by the issuer or by customers themselves.",
+      "official_next_steps": "The customer must retry with a different card or method.",
+      "category": "Card Status",
+      "is_retryable": true,
+      "retry_urgency": "immediate",
+      "suggested_methods": ["alternate_card", "upi", "netbanking"],
+      "rbi_rule_context": null,
+      "bank_guidance": "Card has been placed on administrative or lost/stolen hotlist block by the cardholder or issuer.",
+      "default_plain_english_explanation": "This card has been blocked by your bank or via mobile banking. Please use a different payment method.",
+      "default_recovery_actions": [
+        {
+          "action": "use_another_card",
+          "label": "Use another debit or credit card",
+          "description": "Select an active, unblocked card."
+        },
+        {
+          "action": "switch_to_upi",
+          "label": "Pay with UPI",
+          "description": "Instant payment directly from your bank account."
+        }
+      ]
+    },
+    "invalid_vpa": {
+      "error_reason": "invalid_vpa",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_source": "customer",
+      "error_step": "payment_initiation",
+      "error_description": "The customer has entered an incorrect VPA to complete the payment.",
+      "official_next_steps": "The customer must check and enter the correct VPA.",
+      "category": "UPI Details",
+      "is_retryable": true,
+      "retry_urgency": "immediate",
+      "suggested_methods": ["upi", "card"],
+      "rbi_rule_context": null,
+      "bank_guidance": "Check your UPI handle in your UPI app (e.g. mobile@okhdfcbank or name@upi).",
+      "default_plain_english_explanation": "The UPI ID (VPA) you entered does not exist or was typed incorrectly.",
+      "default_recovery_actions": [
+        {
+          "action": "recheck_vpa",
+          "label": "Re-enter correct UPI ID",
+          "description": "Open your UPI app profile to verify your exact handle (e.g. yourname@okaxis)."
+        },
+        {
+          "action": "pay_via_qr_or_intent",
+          "label": "Scan QR / Open UPI App",
+          "description": "Pay directly by selecting your UPI app without typing a handle."
+        }
+      ]
+    },
+    "upi_app_technical_error": {
+      "error_reason": "upi_app_technical_error",
+      "error_code": "GATEWAY_ERROR",
+      "error_source": "gateway",
+      "error_step": "payment_authorization",
+      "error_description": "Technical error occurred at the customer’s PSP due to which the payment failed.",
+      "official_next_steps": "The customer must retry the payment. If the error persists the customer should try using another PSP or another method.",
+      "category": "UPI Infrastructure / PSP",
+      "is_retryable": true,
+      "retry_urgency": "immediate",
+      "suggested_methods": ["card", "alternate_upi_app", "netbanking"],
+      "rbi_rule_context": null,
+      "bank_guidance": "The Payment Service Provider (e.g. PhonePe/GPay/Paytm PSP) is encountering temporary routing glitches.",
+      "default_plain_english_explanation": "Your UPI application service provider encountered a temporary connection failure.",
+      "default_recovery_actions": [
+        {
+          "action": "switch_upi_app",
+          "label": "Try a different UPI app",
+          "description": "Switch from PhonePe to Google Pay or Paytm."
+        },
+        {
+          "action": "switch_to_card",
+          "label": "Pay with Debit / Credit Card",
+          "description": "Card transactions use bank card gateways rather than UPI PSP networks."
+        }
+      ]
+    },
+    "card_not_enrolled": {
+      "error_reason": "card_not_enrolled",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_source": "bank",
+      "error_step": "payment_authentication",
+      "error_description": "The card is not enrolled for this payment method.",
+      "official_next_steps": "The customer must contact their bank to enroll or use another card.",
+      "category": "Channel Enablement",
+      "is_retryable": true,
+      "retry_urgency": "immediate",
+      "suggested_methods": ["alternate_card", "upi"],
+      "rbi_rule_context": "New cards in India have online e-commerce transactions disabled by default until activated by the customer.",
+      "bank_guidance": "Enable online e-commerce transactions via your bank's mobile app or by sending an activation SMS.",
+      "default_plain_english_explanation": "Your card is not yet activated for online e-commerce transactions by your bank.",
+      "default_recovery_actions": [
+        {
+          "action": "activate_ecommerce",
+          "label": "Enable online usage in bank app",
+          "description": "Go to Card Settings -> Turn on E-Commerce / Online Transactions."
+        },
+        {
+          "action": "switch_to_upi",
+          "label": "Pay via UPI",
+          "description": "Instant payment directly from your linked bank account."
+        }
+      ]
+    },
+    "payment_timed_out": {
+      "error_reason": "payment_timed_out",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_source": "customer",
+      "error_step": "payment_authorization",
+      "error_description": "The customer did not complete the transaction within the specified time. This error may also happen when no response is received from the gateway.",
+      "official_next_steps": "The customer must retry and complete the transaction within the time limit.",
+      "category": "Session Timeout",
+      "is_retryable": true,
+      "retry_urgency": "immediate",
+      "suggested_methods": ["upi", "card"],
+      "rbi_rule_context": null,
+      "bank_guidance": "UPI collect requests typically expire after 8 to 10 minutes.",
+      "default_plain_english_explanation": "The payment window timed out before authorization was completed. No charge was made.",
+      "default_recovery_actions": [
+        {
+          "action": "retry_immediately",
+          "label": "Restart payment",
+          "description": "Open a fresh payment request and approve promptly in your app."
+        }
+      ]
+    },
+    "amount_less_than_minimum_amount": {
+      "error_reason": "amount_less_than_minimum_amount",
+      "error_code": "BAD_REQUEST_ERROR",
+      "error_source": "business",
+      "error_step": "payment_initiation",
+      "error_description": "Amount in the payment request is less than the minimum amount. Transacting through some banks have fixed fees. If the payment amount is less than the fixed fee then this error shows up.",
+      "official_next_steps": "Please make sure that the payment amount is more than the minimum fees associated with the bank.",
+      "category": "Validation",
+      "is_retryable": false,
+      "retry_urgency": "terminal",
+      "suggested_methods": ["upi"],
+      "rbi_rule_context": null,
+      "bank_guidance": "Razorpay minimum transaction threshold is ₹1.00.",
+      "default_plain_english_explanation": "The payment amount is lower than the minimum transaction threshold required by the bank.",
+      "default_recovery_actions": [
+        {
+          "action": "adjust_amount",
+          "label": "Check cart amount",
+          "description": "Ensure the cart or payment amount meets the ₹1.00 minimum."
+        }
+      ]
+    },
+    "server_error": {
+      "error_reason": "server_error",
+      "error_code": "SERVER_ERROR",
+      "error_source": "razorpay",
+      "error_step": "payment_authorization",
+      "error_description": "Technical error at Razorpay’s server. This usually occurs when there is some server issue at Razorpay’s end.",
+      "official_next_steps": "Please retry after some time or reach out to Razorpay.",
+      "category": "Gateway Infrastructure",
+      "is_retryable": true,
+      "retry_urgency": "delayed",
+      "suggested_methods": ["alternate_method"],
+      "rbi_rule_context": null,
+      "bank_guidance": "Transient gateway routing anomaly. Typically clears within seconds.",
+      "default_plain_english_explanation": "A transient network error occurred on the payment gateway. Your money is safe.",
+      "default_recovery_actions": [
+        {
+          "action": "retry_in_moments",
+          "label": "Retry in a few seconds",
+          "description": "Gateway connection hiccups usually resolve immediately."
+        }
+      ]
+    }
+  }
+}

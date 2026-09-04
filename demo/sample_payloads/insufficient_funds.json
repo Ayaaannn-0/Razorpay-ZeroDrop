@@ -1,0 +1,32 @@
+{
+  "entity": "event",
+  "account_id": "acc_demo_merchant_001",
+  "event": "payment.failed",
+  "contains": ["payment"],
+  "payload": {
+    "payment": {
+      "entity": {
+        "id": "pay_sample_funds_001",
+        "amount": 499900,
+        "currency": "INR",
+        "status": "failed",
+        "method": "card",
+        "card_id": "card_test_hdfc_01",
+        "email": "ayaan.shopper@gmail.com",
+        "contact": "+919876543210",
+        "error_code": "BAD_REQUEST_ERROR",
+        "error_description": "The customer does not have sufficient funds in the account to complete the payment.",
+        "error_source": "customer",
+        "error_step": "payment_authorization",
+        "error_reason": "insufficient_funds",
+        "card": {
+          "network": "Visa",
+          "issuer": "HDFC",
+          "last4": "9995",
+          "type": "debit"
+        },
+        "created_at": 1735689600
+      }
+    }
+  }
+}

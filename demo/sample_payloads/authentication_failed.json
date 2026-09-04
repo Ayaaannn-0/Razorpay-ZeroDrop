@@ -1,0 +1,32 @@
+{
+  "entity": "event",
+  "account_id": "acc_demo_merchant_001",
+  "event": "payment.failed",
+  "contains": ["payment"],
+  "payload": {
+    "payment": {
+      "entity": {
+        "id": "pay_sample_auth_002",
+        "amount": 249900,
+        "currency": "INR",
+        "status": "failed",
+        "method": "card",
+        "card_id": "card_test_icici_02",
+        "email": "riya.customer@gmail.com",
+        "contact": "+919811223344",
+        "error_code": "BAD_REQUEST_ERROR",
+        "error_description": "The payment failed as 3D secure, or OTP authentication failed.",
+        "error_source": "customer",
+        "error_step": "payment_authentication",
+        "error_reason": "authentication_failed",
+        "card": {
+          "network": "Mastercard",
+          "issuer": "ICICI",
+          "last4": "0002",
+          "type": "credit"
+        },
+        "created_at": 1735689600
+      }
+    }
+  }
+}

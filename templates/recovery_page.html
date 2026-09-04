@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Razorpay ZeroDrop — Payment Recovery Portal</title>
+  <link rel="stylesheet" href="/static/css/sandbox.css">
+  <style>
+    .recovery-wrap {
+      max-width: 640px;
+      margin: 36px auto;
+      padding: 0 20px;
+    }
+    .recovery-card {
+      background: white;
+      border-radius: var(--radius);
+      border: 1px solid var(--rzp-gray-200);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+    .recovery-head {
+      background: var(--rzp-navy);
+      color: white;
+      padding: 24px 28px;
+    }
+    .recovery-status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(220, 38, 38, 0.2);
+      color: #fca5a5;
+      border: 1px solid rgba(220, 38, 38, 0.4);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .recovery-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 2px;
+    }
+    .recovery-amount {
+      font-size: 28px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-top: 10px;
+      letter-spacing: -0.5px;
+    }
+    .recovery-body {
+      padding: 28px;
+    }
+    .explain-box {
+      background: var(--rzp-blue-subtle);
+      border: 1px solid var(--rzp-blue-border);
+      border-left: 4px solid var(--rzp-blue);
+      padding: 16px 18px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 24px;
+    }
+    .explain-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #1d4ed8;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .explain-text {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--rzp-slate);
+      font-weight: 600;
+    }
+    .action-steps-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: var(--rzp-gray-50);
+      border: 1px solid var(--rzp-gray-200);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+    }
+    .step-number {
+      background: var(--rzp-navy);
+      color: white;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step-content strong {
+      display: block;
+      font-size: 13px;
+      color: var(--rzp-navy);
+      margin-bottom: 2px;
+    }
+    .step-content span {
+      font-size: 12px;
+      color: var(--rzp-muted);
+    }
+    .retry-methods {
+      background: #f8fafc;
+      border: 1px solid var(--rzp-gray-200);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+    .methods-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .method-radios {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .method-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: white;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--rzp-gray-200);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--rzp-slate);
+      transition: all 0.2s;
+    }
+    .method-option:hover {
+      border-color: var(--rzp-blue);
+    }
+    .method-option.selected {
+      border-color: var(--rzp-blue);
+      background: var(--rzp-blue-subtle);
+      color: #0369a1;
+    }
+    .retry-btn {
+      width: 100%;
+      background: var(--rzp-blue);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background-color 0.15s;
+    }
+    .retry-btn:hover {
+      background: var(--rzp-blue-hover);
+    }
+    .success-panel {
+      display: none;
+      text-align: center;
+      padding: 36px 20px;
+    }
+    .success-icon-wrap {
+      width: 56px;
+      height: 56px;
+      background: var(--rzp-green-subtle);
+      border: 1px solid var(--rzp-green-border);
+      color: var(--rzp-green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="brand-wrapper">
+      <div class="rzp-logo-wrap">
+        <svg width="108" height="26" viewBox="0 0 108 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12.42 0L2.12 14.85H8.38L4.85 26L19.85 9.85H13.25L16.85 0H12.42Z" fill="#0C2340"/>
+          <text x="24" y="19" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="18" letter-spacing="-0.5px" fill="#0C2340">Razorpay</text>
+        </svg>
+      </div>
+      <div class="brand-divider"></div>
+      <div>
+        <div class="brand-title">Payment Recovery</div>
+        <div class="brand-subtitle">Secure Gateway Resolution</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/sandbox" class="nav-link-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <span>Checkout Simulator</span>
+      </a>
+      <a href="/dashboard" class="nav-link-btn">
+        <span>Merchant Dashboard</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+      </a>
+    </div>
+  </header>
+
+  <main class="recovery-wrap">
+    {% if error %}
+    <div class="recovery-card" style="padding: 40px; text-align: center;">
+      <div style="width: 48px; height: 48px; background: #fee2e2; color: #dc2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      </div>
+      <h2 style="font-size: 18px; color: #991b1b; margin-bottom: 8px;">{{ error_title or "Invalid or Expired Link" }}</h2>
+      <p style="color: #64748b; font-size: 13px; margin-bottom: 24px;">{{ error }}</p>
+      <a href="/sandbox" class="nav-link-btn" style="background: var(--rzp-navy); color: white; border: none; padding: 10px 20px;">Return to Checkout Simulator</a>
+    </div>
+    {% else %}
+    <div class="recovery-card" id="recoveryMainCard">
+      <div class="recovery-head">
+        <div class="recovery-status-tag">
+          <span>Authorization Declined</span>
+        </div>
+        <div class="recovery-title">Let's get your payment sorted</div>
+        <div style="font-size: 13px; color: #94a3b8; margin-top: 2px;">Resolve and retry your payment securely</div>
+        <div class="recovery-amount">{{ amount_formatted }}</div>
+      </div>
+
+      <div class="recovery-body" id="recoveryContent">
+        <div class="explain-box">
+          <div class="explain-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span>Decline Reason</span>
+          </div>
+          <div class="explain-text">{{ explanation.explanation }}</div>
+        </div>
+
+        <div class="action-steps-title">Recommended Resolution Steps</div>
+        <div class="steps-list">
+          {% for action in explanation.recovery_actions %}
+          <div class="step-item">
+            <div class="step-number">{{ loop.index }}</div>
+            <div class="step-content">
+              <strong>{{ action.label }}</strong>
+              <span>{{ action.description }}</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="retry-methods">
+          <div class="methods-title">Select Alternate Payment Instrument</div>
+          <div class="method-radios">
+            <label class="method-option selected" onclick="selectMethod(this, 'upi')">
+              <input type="radio" name="retry_method" value="upi" checked style="margin-right: 2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+              <span>Instant UPI (Google Pay, PhonePe, Paytm) — Highest Success Rate</span>
+            </label>
+            <label class="method-option" onclick="selectMethod(this, 'alternate_card')">
+              <input type="radio" name="retry_method" value="alternate_card" style="margin-right: 2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+              <span>Alternate Debit / Credit Card (Visa, Mastercard, RuPay)</span>
+            </label>
+            <label class="method-option" onclick="selectMethod(this, 'netbanking')">
+              <input type="radio" name="retry_method" value="netbanking" style="margin-right: 2px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 3l9 7H3z"/></svg>
+              <span>Netbanking (Direct Bank Authorization)</span>
+            </label>
+          </div>
+        </div>
+
+        <button class="retry-btn" id="executeRetryBtn" onclick="executeRecoveryRetry('{{ tx.payment_id }}')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Authorize & Retry Payment ({{ amount_formatted }})</span>
+        </button>
+
+        <div class="security-badge-footer" style="margin-top: 20px;">
+          <span>PCI-DSS Level 1 Compliant</span>
+          <span>•</span>
+          <span>256-bit SSL Encrypted</span>
+          <span>•</span>
+          <span>Powered by Razorpay</span>
+        </div>
+      </div>
+
+      <!-- Success Screen -->
+      <div class="success-panel" id="successPanel">
+        <div class="success-icon-wrap">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h2 style="font-size: 20px; font-weight: 800; color: #065f46; margin-bottom: 6px;">Payment Authorized Successfully</h2>
+        <p style="color: #475569; font-size: 13px; margin-bottom: 20px;">
+          Your payment of <strong>{{ amount_formatted }}</strong> has been verified. The merchant order has been confirmed.
+        </p>
+        <div style="background: var(--rzp-gray-50); border: 1px solid var(--rzp-gray-200); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 24px; text-align: left; font-size: 13px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span style="color: #64748b;">New Payment ID:</span>
+            <span style="font-family: monospace; font-weight: 700;" id="newPaymentIdDisplay">pay_recov_123</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span style="color: #64748b;">Method Used:</span>
+            <span style="font-weight: 700;" id="selectedMethodDisplay">UPI</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: #64748b;">Status:</span>
+            <span style="font-weight: 700; color: #15803d;">RECOVERED (CONFIRMED)</span>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 12px;">
+          <a href="/dashboard" class="nav-link-btn" style="background: var(--rzp-navy); color: white; border: none;">View in Merchant Dashboard</a>
+          <a href="/sandbox" class="nav-link-btn">Return to Checkout Simulator</a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </main>
+
+  <script>
+    let selectedMethod = "upi";
+
+    function selectMethod(elem, method) {
+      document.querySelectorAll(".method-option").forEach(el => el.classList.remove("selected"));
+      elem.classList.add("selected");
+      elem.querySelector("input").checked = true;
+      selectedMethod = method;
+    }
+
+    async function executeRecoveryRetry(paymentId) {
+      const btn = document.getElementById("executeRetryBtn");
+      btn.disabled = true;
+      btn.innerHTML = "<span>Connecting to Gateway...</span>";
+
+      try {
+        const res = await fetch("/api/retry-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            payment_id: paymentId,
+            retry_method: selectedMethod
+          })
+        });
+
+        const data = await res.json();
+        if (data.status === "recovered") {
+          document.getElementById("recoveryContent").style.display = "none";
+          document.getElementById("newPaymentIdDisplay").textContent = data.new_payment_id || ("pay_rec_" + Date.now().toString().slice(-6));
+          document.getElementById("selectedMethodDisplay").textContent = selectedMethod.toUpperCase();
+          document.getElementById("successPanel").style.display = "block";
+        } else {
+          alert("Retry failed: " + (data.message || "Unknown gateway error"));
+          btn.disabled = false;
+          btn.innerHTML = "<span>Authorize & Retry Payment</span>";
+        }
+      } catch (err) {
+        alert("Error connecting to server: " + err.message);
+        btn.disabled = false;
+        btn.innerHTML = "<span>Authorize & Retry Payment</span>";
+      }
+    }
+  </script>
+</body>
+</html>

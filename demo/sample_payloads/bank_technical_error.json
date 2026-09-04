@@ -1,0 +1,32 @@
+{
+  "entity": "event",
+  "account_id": "acc_demo_merchant_001",
+  "event": "payment.failed",
+  "contains": ["payment"],
+  "payload": {
+    "payment": {
+      "entity": {
+        "id": "pay_sample_bank_003",
+        "amount": 750000,
+        "currency": "INR",
+        "status": "failed",
+        "method": "card",
+        "card_id": "card_test_sbi_03",
+        "email": "rohit.buyer@outlook.com",
+        "contact": "+919822334455",
+        "error_code": "GATEWAY_ERROR",
+        "error_description": "The issuing bank was facing technical problems at the moment the payment was attempted. This usually occurs when the Core Banking System encounters a technical error while processing the payment.",
+        "error_source": "bank",
+        "error_step": "payment_authorization",
+        "error_reason": "bank_technical_error",
+        "card": {
+          "network": "Visa",
+          "issuer": "SBI",
+          "last4": "0119",
+          "type": "debit"
+        },
+        "created_at": 1735689600
+      }
+    }
+  }
+}
