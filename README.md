@@ -171,17 +171,18 @@ cd Razorpay-ZeroDrop
 pip install -r requirements.txt
 ```
 
-### 2. Environment Configuration
-ZeroDrop functions completely out of the box with zero external configuration required. To enable live Groq AI generation, copy the sample environment file and provide your key:
+### 2. Environment Configuration (Optional)
+ZeroDrop runs completely out of the box with zero external configuration. No Razorpay merchant account, KYC, or external webhook secrets are required—the built-in checkout simulator handles authentic HMAC-SHA256 signature generation and verification automatically using internal defaults.
+
+To enable live AI inference using Groq Llama-3, copy `.env.example` to `.env` and provide your Groq API key:
 ```bash
 cp .env.example .env
 ```
-Update `.env` with your credentials:
+In `.env`:
 ```ini
 GROQ_API_KEY=your_groq_api_key_here
-RAZORPAY_WEBHOOK_SECRET=zerodrop_secret_key_2026
 ```
-*(Note: If `GROQ_API_KEY` is omitted, the application automatically operates using its deterministic banking rule engine).*
+*(Note: If `GROQ_API_KEY` is omitted or unconfigured, the application runs uninterrupted using its built-in deterministic banking rule engine with 0ms downtime).*
 
 ### 3. Launch Application
 ```bash
